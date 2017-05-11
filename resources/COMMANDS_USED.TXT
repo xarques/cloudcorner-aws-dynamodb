@@ -1,0 +1,60 @@
+aws dynamodb list-tables
+
+aws dynamodb create-table --table-name weatherstation_data --attribute-definitions AttributeName=station_id,AttributeType=S AttributeName=dateandtime,AttributeType=S --key-schema AttributeName=station_id,KeyType=HASH AttributeName=dateandtime,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+aws dynamodb describe-table --table-name weatherstation_data
+aws dynamodb delete-table --table-name weatherstation_data
+
+
+aws dynamodb put-item --table-name weatherstation_data --item '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"},"temperature": {"N" : "0"}}'
+
+aws dynamodb put-item --table-name weatherstation_data --item '{"station_id":{"S":"000002"},"dateandtime" : {"S": "2015/12/25 00:00"},"temperature": {"N" : "0"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb put-item --table-name weatherstation_data --item '{"station_id":{"S":"000003"},"dateandtime" : {"S": "2015/12/25 00:00"},"temperature": {"N" : "10"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb put-item --table-name weatherstation_data --item '{"station_id":{"S":"000004"},"dateandtime" : {"S": "2015/12/25 00:00"},"temperature": {"N" : "10"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb put-item --table-name weatherstation_data --item '{"station_id":{"S":"000005"},"dateandtime" : {"S": "2015/12/25 00:00"},"temperature": {"N" : "100"}}' --return-consumed-capacity TOTAL --return-values ALL_OLD
+
+aws dynamodb update-item --table-name weatherstation_data --key '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"}}'  --update-expression "SET windspeed=:windspeed" --expression-attribute-values '{":windspeed" : {"N" : "100"}}'
+
+aws dynamodb update-item --table-name weatherstation_data --key '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"}}'  --update-expression "SET windspeed=:windspeed" --expression-attribute-values '{":windspeed" : {"N" : "100"}}'
+
+aws dynamodb update-item --table-name weatherstation_data --key '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"}}'  --update-expression "SET windspeed=:windspeed" --expression-attribute-values '{":windspeed" : {"N" : "200"}}' --return-values ALL_NEW
+
+aws dynamodb update-item --table-name weatherstation_data --key '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"}}'  --update-expression "SET windspeed=:windspeed" --expression-attribute-values '{":windspeed" : {"N" : "300"}}' --return-values UPDATED_NEW
+
+aws dynamodb update-table --table-name weatherstation_data --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+
+aws dynamodb delete-item --table-name weatherstation_data --key '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"}}'
+
+aws dynamodb delete-item --table-name weatherstation_data --key '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"}}'
+
+aws dynamodb delete-item --table-name weatherstation_data --key '{"station_id":{"S":"000001"},"dateandtime" : {"S": "2015/12/25 00:00"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb get-item --table-name weatherstation_data --key '{"station_id" : {"S" : "1"}}'
+
+aws dynamodb get-item --table-name weatherstation_data --key '{"station_id" : {"S" : "1"}, "dateandtime" :{"S" : "201601011200"}}'
+
+
+aws dynamodb get-item --table-name weatherstation_data --key '{"station_id" : {"S" : "1"}, "dateandtime" :{"S" : "CHANGEMETOAVALIDONE"}}'
+
+
+aws dynamodb get-item --table-name weatherstation_data --key '{"station_id" : {"S" : "1"}, "dateandtime" :{"S" : "CHANGEMETOAVALIDONE"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb query --table-name weatherstation_data --key-condition-expression "station_id=:id" --expression-attribute-values '{ ":id" : { "S": "1"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb query --table-name weatherstation_data --key-condition-expression "station_id=:id" --expression-attribute-values '{ ":id" : { "S": "1"}}' --return-consumed-capacity TOTAL --consistent-read
+
+
+aws dynamodb query --table-name weatherstation_data --key-condition-expression "station_id=:id AND dateandtime=:dat" --expression-attribute-values '{ ":id" : { "S": "1"}, ":dat" : { "S" : "CHANGEMETOVALID"}}' --return-consumed-capacity TOTAL
+
+
+aws dynamodb query --table-name weatherstation_data --key-condition-expression "station_id=:id AND dateandtime BETWEEN :dat AND :dat2" --expression-attribute-values '{ ":id" : { "S": "1"}, ":dat" : { "S" : "201601010000"}, ":dat2" : {"S" : "201604302359"} }' --return-consumed-capacity TOTAL
+
+
+aws dynamodb query --table-name weatherstation_data --key-condition-expression "station_id=:id" --expression-attribute-values '{ ":id" : { "S": "1"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb query --table-name weatherstation_data --key-condition-expression "station_id=:id" --filter-expression "temperature>:desiredtemp" --expression-attribute-values '{ ":id" : { "S": "1"},":desiredtemp" : {"N" : "25"}}' --return-consumed-capacity TOTAL
+
+aws dynamodb scan --table-name weatherstation_data --consistent-read --filter-expression "uvindex>:uv" --expression-attribute-values '{ ":uv" : {"N" : "5"}}' --return-consumed-capacity TOTAL
+aws dynamodb delete-table --table-name weatherstation_data
